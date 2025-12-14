@@ -1,37 +1,232 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ nom_site }}</title>
-    <style>
-        body {
-            background-color: #0f172a;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 40px;
-        }
-        .carte {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            margin: auto;
-        }
-        h1 {
-            color: #22c55e;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRINCE STORE - Accueil</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background:#0a0a0a;color:#f0f0f0;}
+a{text-decoration:none;color:inherit;}
+header{background:#111;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #0f9d58;}
+header h1{color:#0f9d58;font-size:2rem;}
+nav a{margin-left:20px;font-weight:bold;transition:0.3s;cursor:pointer;}
+nav a:hover{color:#0f9d58;}
+.hero{background:#222 url('https://via.placeholder.com/1200x400') no-repeat center center/cover;height:50vh;display:flex;justify-content:center;align-items:center;text-align:center;color:#fff;}
+.hero h2{font-size:2.5rem;background:rgba(0,0,0,0.5);padding:20px;border-radius:10px;}
+.products{padding:50px 40px;}
+.products h2{text-align:center;margin-bottom:30px;color:#0f9d58;font-size:2rem;}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;}
+.product-card{background:#1a1a1a;border:2px solid #0f9d58;border-radius:10px;padding:20px;text-align:center;transition:transform 0.3s;}
+.product-card:hover{transform:scale(1.05);}
+.product-card img{width:100%;height:200px;object-fit:contain;margin-bottom:15px;}
+.product-card h3{margin-bottom:10px;color:#fff;}
+.product-card p{margin-bottom:15px;color:#ccc;}
+.product-card button{padding:10px 20px;border:none;background:#0f9d58;color:#fff;font-weight:bold;cursor:pointer;border-radius:5px;transition:0.3s;}
+.product-card button:hover{background:#08c14b;}
+#cart{position:fixed;top:20px;right:20px;background:#0f9d58;color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;z-index:100;}
+#cart:hover{background:#08c14b;}
+#cart-modal,#admin-modal,#login-modal,#register-modal{display:none;position:fixed;top:60px;right:20px;width:320px;background:#1a1a1a;border:2px solid #0f9d58;border-radius:10px;padding:15px;z-index:100;}
+#cart-modal h3,#admin-modal h3,#login-modal h3,#register-modal h3{text-align:center;margin-bottom:15px;color:#0f9d58;}
+.cart-item{display:flex;justify-content:space-between;margin-bottom:10px;}
+.cart-item button{background:red;color:#fff;border:none;border-radius:5px;cursor:pointer;padding:2px 6px;}
+.total{margin-top:10px;font-weight:bold;text-align:right;}
+select{margin-top:10px;width:100%;padding:5px;border-radius:5px;border:none;margin-bottom:10px;}
+input{width:100%;padding:5px;margin-bottom:10px;border-radius:5px;border:none;}
+footer{background:#111;padding:20px 40px;text-align:center;border-top:2px solid #0f9d58;margin-top:50px;}
+button.small{padding:5px 10px;font-size:0.8rem;}
+@media(max-width:768px){header{flex-direction:column;align-items:flex-start;}nav{margin-top:10px;}.hero h2{font-size:1.8rem;}}
+</style>
 </head>
 <body>
-    <div class="carte">
-        <h1>{{ nom_site }}</h1>
-        <p>🎮 Boutique gaming en ligne</p>
-        <p>📞 Téléphone : {{ telephone }}</p>
-        <p>📧 Email : {{ email }}</p>
-        <p>📍 Cap-Haïtien, Haïti</p>
-        <hr>
-        <p>🚧 Site en construction 🚧</p>
-    </div>
+
+<header>
+    <h1>PRINCE STORE</h1>
+    <nav>
+        <a onclick="showRegister()">S'inscrire</a>
+        <a onclick="showLogin()">Connexion</a>
+        <a onclick="showAdmin()">Admin</a>
+    </nav>
+</header>
+
+<div id="cart">Panier : <span id="cart-count">0</span></div>
+
+<div id="cart-modal">
+    <h3>Panier</h3>
+    <div id="cart-items"></div>
+    <label for="delivery">Mode de livraison :</label>
+    <select id="delivery">
+        <option value="5">Livraison à domicile (+5 USD)</option>
+        <option value="0">Récupération en entrepôt (0 USD)</option>
+    </select>
+    <p class="total">Total : $<span id="total">0</span></p>
+    <button onclick="checkout()">Payer (Simulé PayPal/MonCash)</button>
+</div>
+
+<div id="admin-modal">
+    <h3>Admin - Modifier produits</h3>
+    <div id="admin-items"></div>
+    <button onclick="closeAdmin()">Fermer</button>
+</div>
+
+<div id="login-modal">
+    <h3>Connexion</h3>
+    <input type="text" id="login-user" placeholder="Nom d'utilisateur">
+    <input type="password" id="login-pass" placeholder="Mot de passe">
+    <button onclick="login()">Connexion</button>
+    <button onclick="closeLogin()">Annuler</button>
+</div>
+
+<div id="register-modal">
+    <h3>Inscription</h3>
+    <input type="text" id="reg-user" placeholder="Nom d'utilisateur">
+    <input type="password" id="reg-pass" placeholder="Mot de passe">
+    <button onclick="register()">S'inscrire</button>
+    <button onclick="closeRegister()">Annuler</button>
+</div>
+
+<section class="hero">
+    <h2>Bienvenue chez PRINCE STORE - Le paradis des gamers</h2>
+</section>
+
+<section class="products">
+    <h2>Nos Produits</h2>
+    <div class="product-grid" id="product-grid"></div>
+</section>
+
+<footer>
+    <p>Contact : +509 38 18 02 18 | Email : alphapro441@gmail.com</p>
+    <p>&copy; 2025 PRINCE STORE - Tous droits réservés</p>
+</footer>
+
+<script>
+// Données initiales
+let cart = [];
+let users = [];
+let admin = {username:"admin", password:"admin"};
+let currentUser = null;
+let products = [
+    {name:"Console XYZ", price:299, img:"https://via.placeholder.com/250x200?text=Console"},
+    {name:"Casque Gamer ABC", price:79, img:"https://via.placeholder.com/250x200?text=Casque"},
+    {name:"Manette Pro", price:49, img:"https://via.placeholder.com/250x200?text=Manette"},
+    {name:"Clavier RGB", price:59, img:"https://via.placeholder.com/250x200?text=Clavier"}
+];
+
+// Rendu des produits
+function renderProducts(){
+    const grid=document.getElementById('product-grid');
+    grid.innerHTML='';
+    products.forEach((p,index)=>{
+        const card=document.createElement('div');
+        card.className='product-card';
+        card.dataset.index=index;
+        card.innerHTML=`
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${p.price} USD</p>
+            <button onclick="addToCart(${index})">Ajouter au panier</button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// Panier
+const cartCount = document.getElementById('cart-count');
+const cartModal = document.getElementById('cart-modal');
+const cartItems = document.getElementById('cart-items');
+const totalEl = document.getElementById('total');
+const deliverySelect = document.getElementById('delivery');
+
+function updateCartDisplay(){
+    cartItems.innerHTML='';
+    let total=0;
+    cart.forEach((item,index)=>{
+        const div=document.createElement('div');
+        div.className='cart-item';
+        div.innerHTML=`${item.name} x${item.qty} - $${item.price*item.qty} 
+        <button onclick="removeFromCart(${index})">x</button>`;
+        cartItems.appendChild(div);
+        total+=item.price*item.qty;
+    });
+    total += parseFloat(deliverySelect.value);
+    totalEl.innerText=total.toFixed(2);
+    cartCount.innerText=cart.reduce((sum,i)=>sum+i.qty,0);
+}
+
+function addToCart(index){
+    const product=products[index];
+    const existing=cart.find(i=>i.name===product.name);
+    if(existing){ existing.qty++; } else{ cart.push({name:product.name,price:product.price,qty:1}); }
+    updateCartDisplay();
+    alert(product.name+" ajouté au panier !");
+}
+
+function removeFromCart(index){ cart.splice(index,1); updateCartDisplay(); }
+
+document.getElementById('cart').addEventListener('click', ()=>{
+    cartModal.style.display = cartModal.style.display==='none'?'block':'none';
+});
+deliverySelect.addEventListener('change', updateCartDisplay);
+
+// Paiement simulé
+function checkout(){
+    if(!currentUser){ alert("Veuillez vous connecter pour payer !"); return; }
+    if(cart.length===0){ alert("Votre panier est vide !"); return; }
+    let total=totalEl.innerText;
+    alert("Paiement simulé via PayPal/MonCash\nMerci "+currentUser+" ! Total : $"+total);
+    cart=[]; updateCartDisplay(); cartModal.style.display='none';
+}
+
+// Admin
+function showAdmin(){
+    const pwd=prompt("Mot de passe admin ?");
+    if(pwd!==admin.password){ alert("Mot de passe incorrect !"); return; }
+    const modal=document.getElementById('admin-modal');
+    modal.style.display='block';
+    renderAdminItems();
+}
+function closeAdmin(){ document.getElementById('admin-modal').style.display='none'; }
+function renderAdminItems(){
+    const container=document.getElementById('admin-items');
+    container.innerHTML='';
+    products.forEach((p,index)=>{
+        const div=document.createElement('div');
+        div.style.marginBottom='10px';
+        div.innerHTML=`${p.name} - $${p.price} 
+        <button class="small" onclick="editProduct(${index})">Modifier</button>`;
+        container.appendChild(div);
+    });
+}
+function editProduct(index){
+    const newName=prompt("Nom du produit :", products[index].name);
+    const newPrice=prompt("Prix :", products[index].price);
+    if(newName) products[index].name=newName;
+    if(newPrice) products[index].price=parseFloat(newPrice);
+    renderProducts(); renderAdminItems();
+}
+
+// Utilisateurs
+function showLogin(){ document.getElementById('login-modal').style.display='block'; }
+function closeLogin(){ document.getElementById('login-modal').style.display='none'; }
+function showRegister(){ document.getElementById('register-modal').style.display='block'; }
+function closeRegister(){ document.getElementById('register-modal').style.display='none'; }
+function login(){
+    const user=document.getElementById('login-user').value;
+    const pass=document.getElementById('login-pass').value;
+    const u=users.find(u=>u.username===user && u.password===pass);
+    if(u){ currentUser=user; alert("Connecté en tant que "+user); closeLogin(); } 
+    else{ alert("Utilisateur ou mot de passe incorrect !"); }
+}
+function register(){
+    const user=document.getElementById('reg-user').value;
+    const pass=document.getElementById('reg-pass').value;
+    if(users.find(u=>u.username===user)){ alert("Utilisateur déjà existant !"); return; }
+    users.push({username:user,password:pass});
+    alert("Inscription réussie ! Connectez-vous."); closeRegister();
+}
+
+renderProducts();
+</script>
+
 </body>
 </html>
