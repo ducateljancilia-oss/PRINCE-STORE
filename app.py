@@ -1,15 +1,14 @@
-from flask import Flask, render_template
+#!/usr/bin/env python
+import os
+import sys
 
-app = Flask(__name__)
+def main():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'prince_store.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError:
+        raise
+    execute_from_command_line(sys.argv)
 
-@app.route("/")
-def accueil():
-    return render_template(
-        "index.html",
-        nom_site="PRINCE STORE",
-        telephone="+509 38 18 02 18",
-        email="alphapro441@gmail.com"
-    )
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    main()
