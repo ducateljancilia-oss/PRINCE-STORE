@@ -1,2 +1,4 @@
-flask
+Django
 gunicorn
+pillow
+whitenoise
